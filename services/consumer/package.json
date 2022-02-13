@@ -1,0 +1,14 @@
+{
+  "name": "node-kafka",
+  "version": "1.0.0",
+  "description": "Node, Kafka",
+  "main": "index.js",
+  "license": "MIT",
+  "author": "vucongtruong1998@gmail.com",
+  "scripts": {
+    "dev": "node index"
+  },
+  "dependencies": {
+    "kafka-node": "^5.0.0"
+  }
+}

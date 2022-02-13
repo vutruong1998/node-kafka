@@ -1,0 +1,40 @@
+version: '3'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - '2181:2181'
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - '9092:9092'
+      - '9093:9093'
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: ${KAFKA_ZOOKEEPER_CONNECT}
+      KAFKA_LISTENERS: ${KAFKA_LISTENERS}
+      KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS}
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      KAFKA_INTER_BROKER_LISTENER_NAME: ${KAFKA_INTER_BROKER_LISTENER_NAME}
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
+      KAFKA_CREATE_TOPICS: 'example-topic:1:1'
+      KAFKA_ADVERTISED_HOST_NAME: host.docker.internal
+    volumes:
+      - '/var/run/docker.sock:/var/run/docker.sock'
+  producer:
+    build:
+      context: ./services/producer
+    depends_on:
+      - kafka
+    environment:
+      TOPIC: example-topic
+      INTERNAL_KAFKA_ADDR: 'kafka:9092'
+  consumer:
+    build:
+      context: ./services/consumer
+    depends_on:
+      - kafka
+    environment:
+      TOPIC: example-topic
+      INTERNAL_KAFKA_ADDR: 'kafka:9092'
